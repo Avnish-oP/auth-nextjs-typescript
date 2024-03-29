@@ -1,13 +1,12 @@
 'use client'
 import React from 'react';
-import { useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 
 function VerifyPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const token = searchParams.get('token');
-    useEffect(() => {
+    const verifyFunction = (token:any) => {
         if (!token) {
             router.push('/');
         }
@@ -25,10 +24,11 @@ function VerifyPage() {
                     router.push('/');
                 }
             });
-    }, []);
+    }
   return (
     <div>
         <h1>Verify Page</h1>
+        <button onClick={()=>verifyFunction(token)}>click here to verify</button>
         
       
     </div>
