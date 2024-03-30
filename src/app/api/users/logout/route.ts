@@ -1,11 +1,25 @@
 import dbConnnect from "@/dbConfig/dbConfig";
 import { NextRequest, NextResponse } from "next/server";
-import User from "@/models/userModel";
 
 
 dbConnnect();
 
-export async function POST(request: NextRequest) {
-    const { email, password } = await request.json();
+export async function POST(request:NextRequest){
     try {
-        const
+        const response = NextResponse.json({
+            message: "User logged out successfully",
+            success: true
+        })
+        response.cookies.set("token","",{
+            httpOnly:true,
+            expires:new Date(0),
+        })
+
+
+    } catch (error:any) {
+        NextResponse.json(
+            {error: error.message},
+            {status: 400}
+        )
+    }
+}
