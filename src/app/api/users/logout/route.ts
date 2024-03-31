@@ -15,6 +15,7 @@ export async function POST(request:NextRequest){
             expires:new Date(0),
         })
 
+        return response;
 
     } catch (error:any) {
         NextResponse.json(
