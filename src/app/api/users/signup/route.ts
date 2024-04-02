@@ -13,10 +13,12 @@ export async function POST(request: NextRequest) {
     const { username, email, password } = reqBody;
 
     if (username.length === 0 || email.length === 0 || password.length === 0) {
+      
       return NextResponse.json({ message: "Please fill all the fields" }, { status: 400 });
     }
 
     const user = await User.findOne({ email });
+    // console.log(user);
     if (user) {
       return NextResponse.json(
         { message: "user already exists" },
@@ -32,7 +34,6 @@ export async function POST(request: NextRequest) {
       email,
       password: hashedPassword
     });
-
     const savedUser = await newUser.save();
     console.log(savedUser);
     
