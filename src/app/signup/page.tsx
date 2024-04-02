@@ -7,9 +7,9 @@ import Link from "next/link";
 import { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { set } from "mongoose";
+import toast,{Toaster} from "react-hot-toast";
 
-export default function SignupFormDemo() {
+export default function Signup() {
   const router = useRouter();
   const [user, setUser] = useState({
     username: "",
@@ -17,16 +17,19 @@ export default function SignupFormDemo() {
     password: "",
     confirmPassword: "",
   });
-  const [responseMessage, setResponseMessage] = useState("");
   const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if(user.password !== user.confirmPassword){
-      alert("Passwords do not match")
+      toast.error("Password and Confirm Password does not match",{
+        position:"bottom-center"
+      })
       return
     }
     try {
-      const response = await axios.post("/api/users/signup", user);
-      setResponseMessage(response.data.message);
+      const response = await axios.post("/api/users/signup", {username:user.username,email:user.email,password:user.password});
+      toast.success(response.data.message,{
+        position:"top-center"
+      })
       setUser({
         username: "",
         email: "",
@@ -51,12 +54,7 @@ export default function SignupFormDemo() {
       <p className="text-neutral-600 text-center text-sm max-w-sm mt-2 dark:text-neutral-300">
         Sign up to get started with our platform
       </p>
-      {responseMessage && (
-        <div className="bg-green-100 text-green-800 p-2 rounded-md mt-4">
-          {responseMessage+" Redirecting to login page"}
-        </div>
-      )}
-      
+
       <form className="my-8" onSubmit={handleSubmit}>
         <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
           <LabelInputContainer>
@@ -115,6 +113,7 @@ export default function SignupFormDemo() {
           <span className="text-neutral-600 dark:text-neutral-300">
             Already have an account?
           </span>
+          <Toaster/>
           <Link
             href={"/login"}
             className="text-neutral-800 dark:text-neutral-200 font-medium hover:underline"
