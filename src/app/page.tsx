@@ -5,8 +5,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { CanvasRevealEffect } from "@/components/ui/canvas-reveal-effect";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import toast, { Toaster } from "react-hot-toast";
+
 
 export default function Home() {
+  const router = useRouter();
   const [user, setUser] = useState({
     username: "",
     email: "",
@@ -20,9 +24,42 @@ export default function Home() {
         email: response.data.email,
       });
     } catch (error: any) {
+        toast.error("You are not logged in, redirecting to login page", {
+          duration: 2000,
+          position: "top-center",
+        });
+        router.push("/login");
+      
       console.log(error.response.data);
+
     }
   };
+
+  const logout=async()=>{
+    fetch("/api/users/logout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          toast.success(data.message, {
+            duration: 2000,
+            position: "top-center",
+          });
+          router.push("/login");
+        } else {
+          toast.error(data.message, {
+            duration: 2000,
+            position: "top-center",
+          });
+        }
+      });
+  
+  }
+
   useEffect(() => {
     getUserInfo();
   });
@@ -40,9 +77,11 @@ export default function Home() {
         <button
           className="bg-black border-2 border-white text-green-400 max-w-24 py-2 px-4 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out z-50"
           type="submit"
+          onClick={logout}
         >
           Logout &rarr;
         </button>
+        <Toaster />
       </div>
       <AnimatePresence>
         {hovered && (
@@ -65,7 +104,6 @@ export default function Home() {
           </motion.div>
         )}
       </AnimatePresence>
-      {/* Radial gradient for the cute fade */}
       <div className="absolute inset-0 [mask-image:radial-gradient(400px_at_center,white,transparent)] bg-black/50 dark:bg-black/90" />
     </div>
   );

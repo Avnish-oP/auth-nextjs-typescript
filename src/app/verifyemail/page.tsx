@@ -1,42 +1,73 @@
-'use client'
-import React from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
+"use client";
+import React from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import toast, { Toast, Toaster } from "react-hot-toast";
+import Link from "next/link";
 
 function VerifyPage() {
-    const [isTokenValid, setIsTokenValid] = useState(true);
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const token = searchParams.get('token');
-    const verifyFunction = (token:any) => {
-        if (!token) {
-            router.push('/signup');
-        }
-        fetch('/api/users/verify', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ token }),
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                console.log(data);
-                if (data.success) {
-                    router.push('/');
-                }
-                else {
-                    setIsTokenValid(false);
-                }
-            });
+  const [verified, setVerified] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
+  const verifyFunction = (token: any) => {
+    if (!token) {
+      toast.error("No token found check you mail", {
+        duration: 1000,
+        position: "top-center",
+      });
+      toast.error("Redirecting to signup page", {
+        duration: 1000,
+        position: "bottom-center",
+      });
+      setTimeout(() => {
+        router.push("/signup");
+      }, 1000);
+      return;
     }
-  return (
-    <div>
+    fetch("/api/users/verify", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ token }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.success) {
+            toast.success(data.message, {
+                duration: 1000,
+                position: "top-center",
+            });
+          setVerified(true);
+          router.push("/");
+        } else {
+            toast.error(data.message, {
+                duration: 2000,
+                position: "top-center",
+            });
+          setVerified(false);
+        }
+      });
+  };
+return (
+    <div className="flex flex-col min-h-screen items-center justify-center">
         <h1>Verify Page</h1>
-        <button onClick={()=>verifyFunction(token)}>click here to verify</button>
-        <p className={`text-red-600 ${isTokenValid? "hidden":"block"}`}>invalid token</p>
+        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => verifyFunction(token)}>
+            click here to verify
+        </button>
+        {verified && (
+            <div>
+                <h1>Verified</h1>
+                <Link className="text-blue-500 hover:underline" href="/login">
+                    Login Here
+                </Link>
+            </div>
+        )}
+        <Toaster />
     </div>
-  )
+);
 }
 
-export default VerifyPage
+export default VerifyPage;
