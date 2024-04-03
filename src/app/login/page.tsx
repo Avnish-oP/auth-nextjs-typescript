@@ -93,9 +93,9 @@ export default function Signup() {
 
         <div className="flex items-center justify-center space-x-2">
           <span className="text-neutral-600 dark:text-neutral-300">
-            Don't have an account?
+            {"Don&apos;t have an account?"}
           </span>
-          <Toaster />
+
           <Link
             href={"/signup"}
             className="text-neutral-800 dark:text-neutral-200 font-medium hover:underline"
@@ -104,6 +104,7 @@ export default function Signup() {
           </Link>
         </div>
       </form>
+      <Toaster />
     </div>
   );
 }

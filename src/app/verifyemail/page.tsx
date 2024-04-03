@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import toast, { Toast, Toaster } from "react-hot-toast";
@@ -65,6 +65,7 @@ return (
                 </Link>
             </div>
         )}
+        <Suspense fallback={<div>Loading...</div>}></Suspense>
         <Toaster />
     </div>
 );
